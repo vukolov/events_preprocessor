@@ -1,0 +1,59 @@
+from unittest import TestCase
+import utils
+import shutil
+import os
+import json
+from application.usecases.preprocessor import Preprocessor
+from infrastructure.data_stream_managers.spark import Spark
+from infrastructure.storages.sources.file import File as SourceFile
+from infrastructure.storages.destinations.console import Console as DestinationConsole
+from infrastructure.storages.destinations.file import File as DestinationFile
+
+
+class TestPreprocessor(TestCase):
+    def setUp(self):
+        project_root = str(utils.get_project_root())
+        shutil.rmtree(project_root + '/tests/data/checkpoint', ignore_errors=True)
+
+        self._project_root = project_root
+        self._data_source = SourceFile(
+            project_root + '/tests/data',
+            'input_messages.json',
+            project_root + '/infrastructure/storages/sources/schemas/metrics/sequences/message.json',
+            'json')
+
+    def test_visualise(self):
+        """Just visualise the output. Always Success"""
+        console_destination = DestinationConsole('_',
+                                                    '',
+                                                    '',
+                                                    'json')
+        preprocessor = Preprocessor(Spark(), self._data_source, console_destination)
+        preprocessor.run()
+        self.assertTrue(True)
+
+    def test_output_data(self):
+        """Checks that the output messages have the necessary fields"""
+        files_dir = self._project_root + '/tests/data/test_preprocessor_output_data'
+        shutil.rmtree(files_dir, ignore_errors=True)
+
+        destination = DestinationFile(files_dir, '', '', 'json')
+        preprocessor = Preprocessor(Spark(), self._data_source, destination)
+        preprocessor.run()
+        preprocessor.stop()
+
+        data = []
+        for filename in os.listdir(files_dir):
+            if filename.endswith('.json'):
+                with open(os.path.join(files_dir, filename), 'r') as f:
+                    file_content = f.read()
+                    if file_content:
+                        message = json.loads(file_content)
+                        data.append(message)
+                        self.assertIn('metric_uid', message)
+                        self.assertIn('sum_metric_value', message)
+                        self.assertIn('avg_metric_value', message)
+                        self.assertIn('sum_scaled', message)
+                        self.assertIn('avg_scaled', message)
+
+        self.assertGreaterEqual(len(data), 1)

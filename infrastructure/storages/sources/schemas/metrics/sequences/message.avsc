@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "MetricEvent",
+  "fields": [
+    {"name": "metric_group_uid", "type": "string"},
+    {"name": "metric_uid", "type": "string"},
+    {"name": "event_time", "type": "string"},
+    {"name": "metric_value", "type": "double"}
+  ]
+}

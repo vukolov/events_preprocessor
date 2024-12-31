@@ -1,0 +1,5 @@
+{"metric_group_uid": "group_1", "metric_uid": "metric_101", "event_time": "2024-12-24T06:15:30Z", "metric_value": 45.7}
+{"metric_group_uid": "group_1", "metric_uid": "metric_102", "event_time": "2024-12-24T06:15:40Z", "metric_value": 50.1}
+{"metric_group_uid": "group_2", "metric_uid": "metric_201", "event_time": "2024-12-24T07:00:00Z", "metric_value": 98.3}
+{"metric_group_uid": "group_2", "metric_uid": "metric_202", "event_time": "2024-12-24T07:05:00Z", "metric_value": 105.6}
+{"metric_group_uid": "group_3", "metric_uid": "metric_301", "event_time": "2024-12-24T07:30:15Z", "metric_value": 65.2}

@@ -1,0 +1,7 @@
+.idea
+__pycache__
+tmp
+venv
+tests/data/checkpoint/*
+tests/data/norm_model/*
+tests/data/test_preprocessor_output_data
