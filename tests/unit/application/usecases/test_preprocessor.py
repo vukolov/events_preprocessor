@@ -21,25 +21,34 @@ class TestPreprocessor(TestCase):
             'input_messages.json',
             project_root + '/infrastructure/storages/sources/schemas/metrics/sequences/message.json',
             'json')
+        self._checkpoints_path = project_root + "/tests/data/checkpoint"
 
     def test_visualise(self):
         """Just visualise the output. Always Success"""
+        normalization_model_path = self._project_root + "/tests/data/norm_model"
         console_destination = DestinationConsole('_',
-                                                    '',
-                                                    '',
-                                                    'json')
-        preprocessor = Preprocessor(Spark(), self._data_source, console_destination)
-        preprocessor.run()
+                                                 '',
+                                                 '',
+                                                 'json')
+        preprocessor = Preprocessor(Spark(),
+                                    self._data_source,
+                                    console_destination,
+                                    self._checkpoints_path)
+        preprocessor.run_sequence_agg_by_time_with_normalization(normalization_model_path)
         self.assertTrue(True)
 
     def test_output_data(self):
         """Checks that the output messages have the necessary fields"""
         files_dir = self._project_root + '/tests/data/test_preprocessor_output_data'
+        normalization_model_path = self._project_root + "/tests/data/norm_model"
         shutil.rmtree(files_dir, ignore_errors=True)
 
-        destination = DestinationFile(files_dir, '', '', 'json')
-        preprocessor = Preprocessor(Spark(), self._data_source, destination)
-        preprocessor.run()
+        file_destination = DestinationFile(files_dir, '', '', 'json')
+        preprocessor = Preprocessor(Spark(),
+                                    self._data_source,
+                                    file_destination,
+                                    self._checkpoints_path)
+        preprocessor.run_sequence_agg_by_time_with_normalization(normalization_model_path)
         preprocessor.stop()
 
         data = []
