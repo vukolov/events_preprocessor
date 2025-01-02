@@ -37,7 +37,7 @@ class TestPreprocessor(TestCase):
         preprocessor.run_sequence_agg_by_time_with_normalization(normalization_model_path)
         self.assertTrue(True)
 
-    def test_output_data(self):
+    def test_run_sequence_agg_by_time_with_normalization(self):
         """Checks that the output messages have the necessary fields"""
         files_dir = self._project_root + '/tests/data/test_preprocessor_output_data'
         normalization_model_path = self._project_root + "/tests/data/norm_model"

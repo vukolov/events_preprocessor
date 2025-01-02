@@ -66,7 +66,6 @@ class Spark(AbstractDataStreamManager):
         return SparkDataStreamAdapter.to_data_stream(read_stream)
 
     def get_aggregation_intervals(self, aggregation_intervals: List[Tuple]) -> DataFrame:
-        # Схема конфигурации окон
         interval_schema = StructType([
             StructField("metric_group_uid", StringType(), True),
             StructField("window_interval_seconds", IntegerType(), True)
@@ -77,7 +76,6 @@ class Spark(AbstractDataStreamManager):
         parsed_stream = SparkDataStreamAdapter.to_spark_stream(data_stream)
         # joined_stream = parsed_stream.join(interval_config, "metric_group_uid")
 
-        # Агрегация по оконным интервалам
         aggregated = parsed_stream \
             .withWatermark("event_time", "30 seconds") \
             .groupBy(
@@ -93,14 +91,11 @@ class Spark(AbstractDataStreamManager):
     def normalize_metrics_values(self, data_stream: DataStream, normalization_model_path: str) -> DataStream:
         aggregated = SparkDataStreamAdapter.to_spark_stream(data_stream)
 
-        # Загрузка обученной модели StandardScaler
         scaler_model = StandardScalerModel.load(normalization_model_path)
 
-        # Векторизация
         assembler = VectorAssembler(inputCols=["sum_metric_value", "avg_metric_value"], outputCol="features")
         assembled_df = assembler.transform(aggregated)
 
-        # Применение обученной модели
         scaled_df = scaler_model.transform(assembled_df) \
             .withColumn("sum_scaled", vector_to_array("scaled_features")[0]) \
             .withColumn("avg_scaled", vector_to_array("scaled_features")[1]) \
