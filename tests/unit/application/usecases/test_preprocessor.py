@@ -59,10 +59,10 @@ class TestPreprocessor(TestCase):
                     if file_content:
                         message = json.loads(file_content)
                         data.append(message)
-                        self.assertIn('metric_uid', message)
-                        self.assertIn('sum_metric_value', message)
-                        self.assertIn('avg_metric_value', message)
-                        self.assertIn('sum_scaled', message)
-                        self.assertIn('avg_scaled', message)
+                        self.assertIn('metric_group_uid', message)
+                        self.assertIn('window', message)
+                        self.assertIn('sorted_metric_ids', message)
+                        self.assertIn('sum_scaled_prepared', message)
+                        self.assertIn('avg_scaled_prepared', message)
 
         self.assertGreaterEqual(len(data), 1)
